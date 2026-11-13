@@ -25,3 +25,21 @@ export function collectTags(entries) {
   }
   return [...tags.values()].sort((a, b) => a.label.localeCompare(b.label));
 }
+
+/**
+ * @template {{ data: { category?: string } }} Entry
+ * @param {Entry[]} entries
+ */
+export function groupByCategory(entries) {
+  /** @type {Map<string, { slug: string, label: string, entries: Entry[] }>} */
+  const groups = new Map();
+  for (const entry of entries) {
+    const category = entry.data.category;
+    const label = typeof category === 'string' ? category.trim() : '';
+    const slug = label ? tagSlug(label) : '';
+    const group = groups.get(slug);
+    if (group) group.entries.push(entry);
+    else groups.set(slug, { slug, label: label || 'No category', entries: [entry] });
+  }
+  return [...groups.values()].sort((a, b) => a.label.localeCompare(b.label));
+}

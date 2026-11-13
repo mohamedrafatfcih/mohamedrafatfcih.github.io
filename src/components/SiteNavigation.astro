@@ -1,0 +1,20 @@
+---
+import { design, href } from '../lib/site';
+import { visibleNavigation } from '../lib/navigation.mjs';
+
+interface Props { mobile?: boolean; }
+const { mobile = false } = Astro.props;
+const items = visibleNavigation(design);
+const isActive = (path: string) => path ? Astro.url.pathname.startsWith(href(path)) : Astro.url.pathname === href();
+---
+{items.length > 0 && <nav class={mobile ? 'mobile-navigation' : 'desktop-nav'} aria-label={mobile ? 'Mobile navigation' : 'Main navigation'}>
+  {items.map((item) => item.kind === 'tab'
+    ? <a href={href(item.path)} aria-current={isActive(item.path) ? 'page' : undefined}>{item.label}</a>
+    : <details class="site-dropdown" name={mobile ? 'mobile-dropdown' : 'desktop-dropdown'}>
+        <summary class:list={[{ active: item.links.some(({ path }) => isActive(path)) }]}>{item.label} <span aria-hidden="true">▾</span></summary>
+        <div class="site-dropdown-links">
+          {item.links.map(({ path, label }) => <a href={href(path)} aria-current={isActive(path) ? 'page' : undefined}>{label}</a>)}
+        </div>
+      </details>
+  )}
+</nav>}

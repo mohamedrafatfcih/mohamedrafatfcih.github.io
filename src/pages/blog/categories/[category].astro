@@ -1,0 +1,26 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PostList from '../../../components/PostList.astro';
+import { getPosts, href } from '../../../lib/site';
+import { groupByCategory } from '../../../lib/content.mjs';
+
+export async function getStaticPaths() {
+  return groupByCategory(await getPosts()).filter(({ slug }) => slug).map((category) => ({
+    params: { category: category.slug },
+    props: { category },
+  }));
+}
+const { category } = Astro.props;
+const posts = category.entries;
+---
+<Base title={`${category.label} articles`} description={`Articles in ${category.label}.`}>
+  <div class="container page-content">
+    <header class="page-header">
+      <a class="back-link" href={href('blog/')}>← All writing</a>
+      <p class="eyebrow">Category</p>
+      <h1><em>{category.label}</em></h1>
+      <p>{posts.length} {posts.length === 1 ? 'article' : 'articles'} in this category.</p>
+    </header>
+    <PostList posts={posts} />
+  </div>
+</Base>

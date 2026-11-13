@@ -1,8 +1,8 @@
 ---
-import Base from '../../layouts/Base.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
-import EmptyState from '../../components/EmptyState.astro';
-import { getProjects } from '../../lib/site';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import EmptyState from '../components/EmptyState.astro';
+import { getProjects } from '../lib/site';
 const projects = await getProjects();
 ---
 <Base title="Projects" description="Selected professional work in iOS, cross-platform applications, and software architecture."><div class="container page-content"><header class="page-header"><p class="eyebrow">Ideas, put into practice</p><h1>Selected <em>work.</em></h1><p>Production applications, reusable systems, and the engineering behind them.</p></header>{projects.length ? <div class="project-grid">{projects.map((project, index) => <ProjectCard project={project} index={index} />)}</div> : <EmptyState eyebrow="Projects" title="Work to share." description="Project overviews and links will be added here." />}</div></Base>

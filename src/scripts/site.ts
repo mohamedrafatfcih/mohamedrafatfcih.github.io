@@ -4,12 +4,18 @@ const systemTheme = matchMedia('(prefers-color-scheme: dark)');
 let preference: string | null = null;
 try { preference = localStorage.getItem('theme'); } catch { /* Private browsing can disable storage. */ }
 
+function syncThemeColor() {
+  const background = getComputedStyle(root).getPropertyValue('--bg').trim();
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', background);
+}
+
 function applyTheme(theme: 'light' | 'dark') {
   root.dataset.theme = theme;
   toggle?.setAttribute('aria-pressed', String(theme === 'dark'));
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#1d1f1d' : '#f7f4ed');
+  syncThemeColor();
   document.dispatchEvent(new Event('theme:change'));
 }
+syncThemeColor();
 
 if (toggle) {
   toggle.hidden = false;
@@ -23,6 +29,22 @@ if (toggle) {
 }
 systemTheme.addEventListener('change', (event) => {
   if (preference !== 'light' && preference !== 'dark') applyTheme(event.matches ? 'dark' : 'light');
+});
+
+const header = document.querySelector('.site-header');
+header?.addEventListener('keydown', (event) => {
+  if (!(event instanceof KeyboardEvent) || event.key !== 'Escape' || !(event.target instanceof Element)) return;
+  const openMenu = event.target.closest<HTMLDetailsElement>('details[open]');
+  if (!openMenu) return;
+  openMenu.open = false;
+  openMenu.querySelector('summary')?.focus();
+});
+document.addEventListener('click', (event) => {
+  if (!(event.target instanceof Node)) return;
+  const target = event.target;
+  header?.querySelectorAll<HTMLDetailsElement>('details[open]').forEach((menu) => {
+    if (!menu.contains(target)) menu.open = false;
+  });
 });
 
 for (const block of document.querySelectorAll<HTMLPreElement>('pre.astro-code')) {

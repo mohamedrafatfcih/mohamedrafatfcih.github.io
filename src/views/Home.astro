@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import { render } from 'astro:content';
+import Arrow from '../components/Arrow.astro';
+import EmptyState from '../components/EmptyState.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostList from '../components/PostList.astro';
+import ResearchList from '../components/ResearchList.astro';
+import DesignComponents from '../components/DesignComponents.astro';
+import { getProfile, getProjects, getPosts, getResearch, href, pageEnabled } from '../lib/site';
+const [profile, projects, posts, papers] = await Promise.all([getProfile(), getProjects(), getPosts(), getResearch()]);
+const { Content: Bio } = await render(profile);
+---
+<Base>
+  <section class="hero container">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="tiny-line" aria-hidden="true"></span> {profile.data.role} · {profile.data.location}</p>
+      <h1>Engineering,<br />with <em>perspective.</em></h1>
+      <div class="hero-intro"><Bio /></div>
+      {(pageEnabled('projects') || pageEnabled('resume')) && <div class="hero-actions">
+        {pageEnabled('projects') && <a class="button" href={href('projects/')}>Explore my work <Arrow /></a>}
+        {pageEnabled('resume') && <a class="text-link" href={href('resume/')}>Read my resume <Arrow diagonal /></a>}
+      </div>}
+    </div>
+    <aside class="hero-note" aria-label="At a glance">
+      <div class="note-top"><span class="eyebrow">A little context</span><span class="note-edition">01 / PROFILE</span></div>
+      <div class="orbital-art" aria-hidden="true"><svg viewBox="0 0 360 230" fill="none"><path d="M20 180h320M180 15v200" stroke="currentColor" opacity=".15"/><ellipse cx="180" cy="112" rx="124" ry="58" transform="rotate(-32 180 112)" stroke="currentColor" opacity=".4"/><ellipse cx="180" cy="112" rx="124" ry="58" transform="rotate(32 180 112)" stroke="currentColor" opacity=".4"/><circle cx="180" cy="112" r="54" stroke="currentColor" opacity=".25"/><circle cx="180" cy="112" r="7" fill="currentColor"/><circle cx="283" cy="58" r="5" fill="currentColor"/><circle cx="81" cy="170" r="4" fill="currentColor"/><path d="M307 22v16m-8-8h16M47 74v12m-6-6h12" stroke="currentColor" opacity=".6"/></svg><span class="art-caption">Connecting ideas. Building systems.</span></div>
+      <dl class="note-facts"><div><dt>Currently</dt><dd>{profile.data.current}</dd></div><div><dt>Studying</dt><dd>{profile.data.study.degree}, {profile.data.study.university}</dd></div><div><dt>Experience</dt><dd>{profile.data.experience}</dd></div></dl>
+    </aside>
+  </section>
+  <DesignComponents page="home" afterIntro />
+  <div class="expertise-strip"><div class="container"><span class="eyebrow">Across the stack</span><p>Swift & iOS <span>·</span> Software architecture <span>·</span> Flutter <span>·</span> AI & machine learning <span>·</span> IoT</p></div></div>
+  {pageEnabled('projects') && <section class="section container" aria-labelledby="work-heading">
+    <div class="section-heading"><div><p class="eyebrow">01 / In practice</p><h2 id="work-heading">Selected <em>work.</em></h2></div><a class="text-link" href={href('projects/')}>All projects <Arrow /></a></div>
+    {projects.length ? <div class="project-grid">{projects.slice(0, 3).map((project, index) => <ProjectCard project={project} index={index} />)}</div> : <EmptyState eyebrow="Projects" title="Work to share." description="Project overviews and links will be added here." />}
+  </section>}
+  {pageEnabled('research') && <section class="section research-home" aria-labelledby="research-heading"><div class="container">
+    <div class="section-heading"><div><p class="eyebrow">02 / In exploration</p><h2 id="research-heading">Research & <em>ideas.</em></h2></div><a class="text-link" href={href('research/')}>Research <Arrow /></a></div>
+    {papers.length ? <ResearchList papers={papers.slice(0, 3)} /> : <div class="research-callout"><span class="research-symbol" aria-hidden="true">∴</span><div><h3>A space for deeper questions.</h3><p>{profile.data.study.degree} at {profile.data.study.university} — {profile.data.study.status.toLowerCase()}. Publications and research links will appear here as they become available.</p></div><a class="round-link" href={href('research/')} aria-label="Explore research"><Arrow diagonal /></a></div>}
+  </div></section>}
+  {pageEnabled('blog') && <section class="section container" aria-labelledby="writing-heading"><div class="section-heading"><div><p class="eyebrow">03 / In writing</p><h2 id="writing-heading">Notes from <em>the work.</em></h2></div><a class="text-link" href={href('blog/')}>All writing <Arrow /></a></div>{posts.length ? <PostList posts={posts.slice(0, 3)} /> : <EmptyState eyebrow="The notebook is open" title="Good ideas take a little time." description="Articles on mobile development, software architecture, and the technologies I explore will live here. There are no published posts yet." />}</section>}
+  {pageEnabled('contact') && <section class="contact-band container"><div><p class="eyebrow">Have something in mind?</p><h2>Let’s make a<br /><em>connection.</em></h2></div><a class="button" href={href('contact/')}>Get in touch <Arrow diagonal /></a></section>}
+</Base>

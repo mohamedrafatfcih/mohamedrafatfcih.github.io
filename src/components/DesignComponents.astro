@@ -1,0 +1,22 @@
+---
+import { componentHref, design } from '../lib/site';
+import { componentsFor } from '../lib/design.mjs';
+
+interface Props { page: string; afterIntro?: boolean; }
+const { page, afterIntro = false } = Astro.props;
+const components = componentsFor(design, page, afterIntro);
+---
+{components.length > 0 && <div class="container design-components">
+  {components.map((component) => (
+    <section class="design-component" data-layout={component.layout} data-surface={component.surface}>
+      <div class="design-component-heading">
+        {component.eyebrow && <p class="eyebrow">{component.eyebrow}</p>}
+        <h2>{component.title}</h2>
+      </div>
+      <div class="design-component-content">
+        <p>{component.body}</p>
+        {component.linkText && componentHref(component.linkUrl) && <a class="button" href={componentHref(component.linkUrl)}>{component.linkText}</a>}
+      </div>
+    </section>
+  ))}
+</div>}

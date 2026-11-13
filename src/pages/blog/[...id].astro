@@ -8,4 +8,4 @@ interface Props { post: CollectionEntry<'blog'>; }
 const { post } = Astro.props;
 const { Content } = await render(post);
 ---
-<Article title={post.data.title} description={post.data.description} section="Writing" back="blog/" meta={formatDate(post.data.date)} tags={post.data.tags}><Content /></Article>
+<Article title={post.data.title} description={post.data.description} section="Writing" back="blog/" meta={formatDate(post.data.date)} category={post.data.category} tags={post.data.tags}><Content /></Article>

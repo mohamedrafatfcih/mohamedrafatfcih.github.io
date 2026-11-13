@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { href, formatDate } from '../lib/site';
+import { tagSlug } from '../lib/content.mjs';
 import Arrow from './Arrow.astro';
 import TagList from './TagList.astro';
 interface Props { posts: CollectionEntry<'blog'>[]; }
@@ -9,7 +10,10 @@ const { posts } = Astro.props;
 <div class="post-list">
   {posts.map((post) => (
     <article class="post-row">
-      <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+      <div class="post-meta">
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        {post.data.category && <a href={href(`blog/categories/${tagSlug(post.data.category)}/`)}>{post.data.category}</a>}
+      </div>
       <div><TagList tags={post.data.tags} linked /><h3><a href={href(`blog/${post.id}/`)}>{post.data.title}</a></h3><p>{post.data.description}</p></div>
       <a class="icon-link" href={href(`blog/${post.id}/`)} aria-label={`Read ${post.data.title}`}><Arrow /></a>
     </article>

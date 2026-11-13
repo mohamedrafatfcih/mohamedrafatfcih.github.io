@@ -1,0 +1,24 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { design } from '../lib/site';
+import { optionalPages } from '../lib/navigation.mjs';
+import Blog from '../views/Blog.astro';
+import Contact from '../views/Contact.astro';
+import Projects from '../views/Projects.astro';
+import Research from '../views/Research.astro';
+import Resume from '../views/Resume.astro';
+import CustomPage from '../views/CustomPage.astro';
+
+export const getStaticPaths = (() => [
+  ...optionalPages.filter((id) => !design.hiddenPages.includes(id))
+    .map((id) => ({ params: { page: id }, props: { builtIn: id, content: undefined } })),
+  ...design.pages.filter(({ id }) => id !== design.homePage)
+    .map((content) => ({ params: { page: content.slug }, props: { builtIn: undefined, content } })),
+]) satisfies GetStaticPaths;
+
+const views = { blog: Blog, contact: Contact, projects: Projects, research: Research, resume: Resume };
+const { builtIn, content } = Astro.props;
+const View = builtIn && views[builtIn as keyof typeof views];
+---
+{View && <View />}
+{content && <CustomPage page={content} />}

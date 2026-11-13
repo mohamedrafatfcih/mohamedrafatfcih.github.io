@@ -1,0 +1,89 @@
+:root {
+  color-scheme: light dark;
+  --background: light-dark(#f6f2eb, #1c1e1a);
+  --surface: light-dark(#fffcf7, #242722);
+  --ink: light-dark(#292821, #f2ede3);
+  --muted: light-dark(#61584f, #c3bbad);
+  --line: light-dark(#d6cbbd, #45483f);
+  --accent: light-dark(#8a432e, #f0a889);
+  --tint: light-dark(#f5e5d9, #473329);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--ink); }
+h1, h2, p { margin: 0; }
+h1, h2 { font-family: Georgia, serif; font-weight: 400; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); letter-spacing: -.04em; }
+h2 { font-size: 1.65rem; overflow-wrap: anywhere; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.shell { width: min(calc(100% - 2rem), 1160px); margin-inline: auto; }
+.masthead { padding-block: 2rem 0; background: var(--surface); border-bottom: 1px solid var(--line); }
+.masthead p, .muted, small { color: var(--muted); }
+.eyebrow { font-size: .73rem; text-transform: uppercase; letter-spacing: .13em; }
+.eyebrow span { color: var(--accent); }
+nav { display: flex; flex-wrap: wrap; gap: .2rem 1.3rem; margin-top: 1.2rem; }
+nav a { padding: .55rem .05rem; border-bottom: 2px solid transparent; text-decoration: none; }
+nav [aria-current] { color: var(--accent); border-bottom-color: var(--accent); }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3.25fr); gap: 1rem; align-items: start; padding-block: 1.5rem 3rem; }
+.workspace { display: grid; gap: 1rem; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: .65rem; padding: clamp(1rem, 3vw, 1.6rem); }
+.entries .button, .entries p { margin-top: .8rem; }
+.entries ul { padding: 0; margin: .8rem 0 0; list-style: none; }
+.entries li a { display: block; padding: .55rem .6rem; text-decoration: none; overflow-wrap: anywhere; border-radius: .3rem; }
+.entries li a:hover, .entries li a[aria-current] { background: var(--tint); }
+.entries small { display: block; }
+.entry-category { margin-top: 1rem; }
+.entry-category h3 { margin: 0; color: var(--muted); font-size: .85rem; overflow-wrap: anywhere; }
+.entry-category ul { margin-top: .25rem; }
+.editor-heading, .actions { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; }
+.badge { background: var(--tint); color: var(--accent); border-radius: 1rem; padding: .2rem .65rem; font-size: .78rem; white-space: nowrap; }
+.fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem 1rem; margin-block: 1rem; }
+.wide { grid-column: 1 / -1; }
+label { font-size: .9rem; font-weight: 600; }
+label small { font-weight: 400; }
+input, textarea, button, select { font: inherit; color: inherit; }
+input:not([type=checkbox]), textarea, select { display: block; width: 100%; background: var(--background); border: 1px solid var(--line); border-radius: .3rem; margin-top: .3rem; padding: .5rem .6rem; }
+textarea { resize: vertical; }
+.source, .path { font-family: ui-monospace, monospace; overflow-wrap: anywhere; }
+.button { display: inline-block; border: 1px solid var(--line); border-radius: .35rem; padding: .52rem .72rem; background: var(--surface); font: inherit; font-size: .9rem; text-decoration: none; cursor: pointer; }
+.button:hover { border-color: var(--accent); color: var(--accent); }
+.primary, .primary:hover { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.danger { color: var(--accent); }
+.editor .muted { font-size: .83rem; margin-top: .65rem; }
+.notice, .error { margin-top: 1rem; padding: .65rem .85rem; border-left: 3px solid var(--accent); background: var(--tint); }
+.error ul { margin: 0; padding-left: 1.25rem; }
+.remove { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.remove summary { color: var(--accent); cursor: pointer; width: fit-content; }
+.remove form { display: grid; justify-items: start; gap: .6rem; margin-top: .6rem; }
+iframe { display: block; width: 100%; height: 28rem; border: 1px solid var(--line); border-radius: .3rem; margin-top: .8rem; }
+@media (max-width: 680px) { .layout, .fields { grid-template-columns: minmax(0, 1fr); } }
+
+.design-actions { margin-top: 1rem; }
+.design-group { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.design-group h3 { margin: 0; }
+.design-card { border: 1px solid var(--line); border-radius: .35rem; padding: .85rem; margin: 1rem 0; }
+.design-card summary { cursor: pointer; font-weight: 600; overflow-wrap: anywhere; }
+.design-card .actions { margin-top: .85rem; }
+.design-group > .button { margin-top: .65rem; }
+.design-group select { display: block; width: 100%; background: var(--background); color: inherit; font: inherit; border: 1px solid var(--line); border-radius: .3rem; margin-top: .3rem; padding: .5rem; }
+.palette-grid, .color-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+.palette, .placement { min-width: 0; margin: 0; padding: .7rem; border: 1px solid var(--line); border-radius: .3rem; }
+.color-grid input[type=color] { height: 2.1rem; padding: .2rem; }
+.check-list { display: flex; flex-wrap: wrap; gap: .3rem .9rem; margin-bottom: .65rem; }
+@media (max-width: 540px) { .palette-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.menu-child { min-width:0; margin:0 0 .65rem; padding:.6rem; border:1px solid var(--line); border-radius:.3rem; }
+.menu-child .fields { margin-top:0; }
+#navigation > .actions { margin-top:.75rem; }
+
+.media-page { padding-block: 1.5rem 3rem; }
+.media-picker { margin-block: .7rem; }
+.attachment-picker { min-width: 0; margin: 0 0 1rem; padding: .8rem; border: 1px solid var(--line); border-radius: .35rem; }
+.media-list { list-style: none; padding: 0; margin: .55rem 0; max-height: 14rem; overflow: auto; }
+.media-row { display: flex; align-items: baseline; gap: .45rem .75rem; flex-wrap: wrap; padding: .35rem 0; overflow-wrap: anywhere; }
+.media-row a { color: var(--accent); }
+.media-player { margin-block: 1rem; }
+.media-player img,.media-player video,.media-player audio { display: block; max-width: 100%; max-height: 68vh; }
+.external-link-editor { margin-top:.7rem; }
+.external-link-editor summary { cursor:pointer; }

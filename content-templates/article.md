@@ -2,6 +2,7 @@
 title: Your article title
 description: A short explanation of what readers will learn.
 date: 2026-11-05
+category: Software Engineering
 tags: [Swift, Software Architecture]
 draft: true
 ---

@@ -2,13 +2,17 @@
 import Base from './Base.astro';
 import TagList from '../components/TagList.astro';
 import { href } from '../lib/site';
-interface Props { title: string; description: string; section: string; back: string; meta?: string; tags?: string[]; }
-const { title, description, section, back, meta, tags = [] } = Astro.props;
+import { tagSlug } from '../lib/content.mjs';
+interface Props { title: string; description: string; section: string; back: string; meta?: string; category?: string; tags?: string[]; }
+const { title, description, section, back, meta, category, tags = [] } = Astro.props;
 ---
 <Base title={title} description={description} article>
   <article class="container article-shell">
     <a class="back-link" href={href(back)}>← All {section.toLowerCase()}</a>
-    <header class="article-header"><span class="eyebrow">{section}</span><h1>{title}</h1><p class="article-description">{description}</p>{meta && <p class="meta">{meta}</p>}{tags.length > 0 && <TagList tags={tags} linked={section === 'Writing'} />}</header>
+    <header class="article-header"><span class="eyebrow">{section}</span><h1>{title}</h1><p class="article-description">{description}</p>
+      {(meta || category) && <p class="meta">{meta}{meta && category && <span aria-hidden="true"> · </span>}{category && <a href={href(`blog/categories/${tagSlug(category)}/`)}>{category}</a>}</p>}
+      {tags.length > 0 && <TagList tags={tags} linked={section === 'Writing'} />}
+    </header>
     <div class="prose"><slot /></div>
   </article>
 </Base>

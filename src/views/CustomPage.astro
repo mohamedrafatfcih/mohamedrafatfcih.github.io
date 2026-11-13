@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import DesignComponents from '../components/DesignComponents.astro';
+import type { Attachment } from '../lib/media.mjs';
+import { markdownProcessor, shikiConfig } from '../lib/markdown.mjs';
+
+interface Props {
+  page: { id: string; title: string; description: string; body: string; attachments: Attachment[] };
+  isHome?: boolean;
+}
+const { page, isHome = false } = Astro.props;
+const hasContent = page.body.trim() || page.attachments.length;
+const renderer = hasContent && await markdownProcessor({ allowDangerousHtml: false }, {
+  base: import.meta.env.BASE_URL, development: import.meta.env.DEV,
+}).createRenderer({ shikiConfig });
+const html = renderer ? (await renderer.render(page.body, { frontmatter: { attachments: page.attachments } })).code : '';
+---
+<Base title={page.title} description={page.description}>
+  <div class="page-content">
+    <div class="container"><header class="page-header"><h1>{page.title}</h1>{page.description && <p>{page.description}</p>}</header></div>
+    {isHome && <DesignComponents page={page.id} afterIntro />}
+    <div class="container">
+      {html && <div class="prose" set:html={html} />}
+    </div>
+  </div>
+</Base>

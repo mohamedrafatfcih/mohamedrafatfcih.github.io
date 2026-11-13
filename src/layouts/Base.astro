@@ -1,5 +1,9 @@
 ---
-import { getProfile, href } from '../lib/site';
+import { design, getProfile, href, pageEnabled } from '../lib/site';
+import { selectedTheme, themeCss } from '../lib/design.mjs';
+import { currentPage, visibleNavigation } from '../lib/navigation.mjs';
+import DesignComponents from '../components/DesignComponents.astro';
+import SiteNavigation from '../components/SiteNavigation.astro';
 import '../styles/global.css';
 import 'katex/dist/katex.min.css';
 
@@ -9,20 +13,23 @@ const { data: profile } = await getProfile();
 const pageTitle = title ? `${title} — ${profile.name}` : `${profile.name} — ${profile.role}`;
 const pageDescription = description || profile.description;
 const canonical = new URL(Astro.url.pathname, Astro.site || Astro.url.origin);
-const navigation = [ ['Home', ''], ['Resume', 'resume/'], ['Research', 'research/'], ['Projects', 'projects/'], ['Blog', 'blog/'], ['Contact', 'contact/'] ];
-const isActive = (path: string) => path ? Astro.url.pathname.startsWith(href(path)) : Astro.url.pathname === href();
+const designPage = currentPage(design, Astro.url.pathname.slice(href().length));
+const hasMenu = visibleNavigation(design).length > 0;
+const theme = selectedTheme(design);
+const customTheme = theme.id !== 'editorial';
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-custom-theme={customTheme ? '' : undefined}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={pageDescription} />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#f7f4ed" />
+    <meta name="theme-color" content={theme.light.bg} />
+    {customTheme && <style is:inline set:html={themeCss(theme)} />}
     <link rel="icon" type="image/svg+xml" href={href('favicon.svg')} />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" type="application/rss+xml" title={`${profile.name} — Blog`} href={href('rss.xml')} />
+    {pageEnabled('blog') && <link rel="alternate" type="application/rss+xml" title={`${profile.name} — Blog`} href={href('rss.xml')} />}
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content={article ? 'article' : 'website'} />
@@ -44,20 +51,20 @@ const isActive = (path: string) => path ? Astro.url.pathname.startsWith(href(pat
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href={href()} aria-label={`${profile.name} — home`}><span class="brand-mark" aria-hidden="true">mr<span>.</span></span><span class="brand-name">{profile.name}</span></a>
-        <nav class="desktop-nav" aria-label="Main navigation">{navigation.map(([label, path]) => <a href={href(path)} aria-current={isActive(path) ? 'page' : undefined}>{label}</a>)}</nav>
+        <SiteNavigation />
         <div class="header-actions">
           <button class="theme-toggle" type="button" aria-label="Toggle color theme" aria-pressed="false" hidden>
             <svg class="sun-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             <svg class="moon-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 15a8.5 8.5 0 0 1-11-11A8.5 8.5 0 1 0 20 15Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
           </button>
-          <details class="mobile-menu"><summary>Menu <span aria-hidden="true">+</span></summary><nav aria-label="Mobile navigation">{navigation.map(([label, path]) => <a href={href(path)} aria-current={isActive(path) ? 'page' : undefined}>{label}</a>)}</nav></details>
+          {hasMenu && <details class="mobile-menu"><summary>Menu <span aria-hidden="true">+</span></summary><SiteNavigation mobile /></details>}
         </div>
       </div>
     </header>
-    <main id="main" tabindex="-1"><slot /></main>
+    <main id="main" tabindex="-1"><slot />{designPage && <DesignComponents page={designPage} />}</main>
     <footer class="site-footer container">
       <div><a class="footer-name" href={href()}>{profile.name}<span class="accent">.</span></a><p>{profile.role} · {profile.location}</p></div>
-      <div class="footer-links"><a href={`mailto:${profile.email}`}>Email <span aria-hidden="true">↗</span></a>{profile.github && <a href={profile.github}>GitHub <span aria-hidden="true">↗</span></a>}{profile.linkedin && <a href={profile.linkedin}>LinkedIn <span aria-hidden="true">↗</span></a>}<a href={href('rss.xml')}>RSS <span aria-hidden="true">↗</span></a></div>
+      <div class="footer-links"><a href={`mailto:${profile.email}`}>Email <span aria-hidden="true">↗</span></a>{profile.github && <a href={profile.github}>GitHub <span aria-hidden="true">↗</span></a>}{profile.linkedin && <a href={profile.linkedin}>LinkedIn <span aria-hidden="true">↗</span></a>}{pageEnabled('blog') && <a href={href('rss.xml')}>RSS <span aria-hidden="true">↗</span></a>}</div>
       <p class="copyright">© {new Date().getFullYear()} {profile.name}</p>
     </footer>
     <script src="../scripts/site.ts"></script>

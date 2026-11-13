@@ -1,8 +1,8 @@
 ---
-import Base from '../../layouts/Base.astro';
-import ResearchList from '../../components/ResearchList.astro';
-import EmptyState from '../../components/EmptyState.astro';
-import { getResearch, getProfile } from '../../lib/site';
+import Base from '../layouts/Base.astro';
+import ResearchList from '../components/ResearchList.astro';
+import EmptyState from '../components/EmptyState.astro';
+import { getResearch, getProfile } from '../lib/site';
 const [papers, profile] = await Promise.all([getResearch(), getProfile()]);
 const study = profile.data.study;
 ---
